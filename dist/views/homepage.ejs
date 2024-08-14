@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scissor - Shorten Your URL</title>
+    <link rel="stylesheet" href="/styles/main.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- DataTables CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css"
+    />
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
+    <!-- qr code -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #f4f4f4;
+        color: #333;
+      }
+
+      .hero {
+        background: linear-gradient(135deg, #6e72fc, #ad1deb);
+        color: white;
+        padding: 50px 0;
+        text-align: center;
+      }
+
+      .hero .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .hero-content {
+        flex: 1;
+        min-width: 300px;
+        max-width: 600px;
+      }
+
+      .qr-code-wrapper {
+        flex: 0 0 300px;
+        margin-top: 20px;
+        text-align: center;
+      }
+
+      .hero h1 {
+        font-size: 3em;
+        margin-bottom: 0.5em;
+      }
+
+      .hero p {
+        font-size: 1.2em;
+        margin-bottom: 1em;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+
+      form input[type="url"],
+      form input[type="text"] {
+        width: 80%;
+        max-width: 400px;
+        padding: 15px;
+        margin: 10px 0;
+        border: none;
+        border-radius: 30px;
+        font-size: 1em;
+      }
+
+      form button {
+        padding: 15px 30px;
+        background-color: #ff5e57;
+        color: white;
+        border: none;
+        border-radius: 30px;
+        font-size: 1em;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      form button:hover {
+        background-color: #ff3b30;
+      }
+
+      .features {
+        background: white;
+        padding: 50px 0;
+        text-align: center;
+      }
+
+      .features .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+      }
+
+      .card {
+        background: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+      }
+
+      .card:hover {
+        transform: translateY(-10px);
+      }
+
+      .card h2 {
+        font-size: 1.5em;
+        margin-bottom: 0.5em;
+        color: #6e72fc;
+      }
+
+      .card p {
+        font-size: 1em;
+        color: #666;
+      }
+
+      .card img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+        margin-top: 10px;
+      }
+
+      .placeholder {
+        font-size: 1em;
+        color: #999;
+      }
+
+      #topDiv {
+        display: flex;
+        color: white;
+        justify-content: space-between;
+        margin: 0 50px;
+        flex-wrap: wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="hero">
+      <div id="topDiv">
+        <div>Your User ID: <span id="userId"></span></div>
+        <form id="searchId" style="flex-direction: row">
+          <div>
+            <input
+              id="searchIdInput"
+              type="text"
+              placeholder="serach user ID"
+            />
+          </div>
+          <button>Search</button>
+        </form>
+      </div>
+      <hr />
+      <div class="container">
+        <div class="hero-content">
+          <h1>Scissor</h1>
+          <p>Brief is the new black. Shorten your URLs effortlessly.</p>
+          <form id="shorten-form">
+            <input
+              type="url"
+              id="longUrl"
+              name="longUrl"
+              placeholder="Paste your long URL here"
+              required
+            />
+            <input
+              type="text"
+              id="customDomain"
+              name="customDomain"
+              placeholder="Enter custom domain (optional)"
+            />
+            <button type="submit">Shorten URL</button>
+          </form>
+        </div>
+        <div class="qr-code-wrapper">
+          <div class="card" id="qr-code-section">
+            <h2>QR Code</h2>
+            <div class="placeholder" id="qrDiv">
+              QR Code will be displayed here.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="features">
+      <div class="container">
+        <table id="example" class="display" style="width: 100%">
+          <thead>
+            <tr>
+              <th>Url</th>
+              <th>Short</th>
+              <th>Last Used</th>
+              <th>Total Hits</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+    <script>
+      $(document).ready(function () {
+        //random userId generator
+        function generateRandom(length = 26) {
+          const randomNum =
+            Math.floor(Math.random() * 900000000000) + 100000000000;
+          return randomNum;
+        }
+
+        // Get or set global userId
+        let globalUserId = localStorage.getItem("globalUserId");
+        if (!globalUserId) {
+          globalUserId = generateRandom();
+          localStorage.setItem("globalUserId", globalUserId);
+        }
+
+        $("#userId").text(globalUserId);
+
+        //initialize data table
+        var table = $("#example").DataTable({
+          data: [],
+          columns: [
+            { data: "url" },
+            { data: "shortUrl" },
+            { data: "lastUsed" },
+            { data: "totalHits" },
+          ],
+          paging: true,
+          searching: true,
+          ordering: true,
+        });
+        function appendData(newData) {
+          // $("html, body").animate(
+          //   {
+          //     scrollTop: $("#qr-code-section").offset().top,
+          //   },
+          //   1000
+          // );
+          newData.forEach(function (item) {
+            table.row.add(item).draw();
+          });
+        }
+
+        //qr code function
+        function generateQRCode(url) {
+          const qrCodeDiv = document.getElementById("qrDiv");
+          qrCodeDiv.innerHTML = "";
+          if (url) {
+            QRCode.toCanvas(url, function (error, canvas) {
+              if (error) console.error(error);
+              qrCodeDiv.appendChild(canvas);
+            });
+          }
+        }
+
+        //api calls
+        $("#shorten-form").submit(function (event) {
+          event.preventDefault();
+
+          let longUrl = $("#longUrl").val();
+          let customDomain = $("#customDomain").val();
+          let userId = globalUserId;
+          $.ajax({
+            url: "/api/shorten",
+            method: "POST",
+            data: {
+              url: longUrl,
+              customDomain: customDomain,
+              userId: userId,
+            },
+            success: function (response) {
+              $("#example").DataTable().clear().draw();
+              appendData(response.data);
+              generateQRCode(response.data[0].shortUrl);
+            },
+            error: function (error) {
+              alert("An error occurred. Please try again.");
+            },
+          });
+        });
+        $("#searchId").submit(function (event) {
+          let userIdSearch = $("#searchIdInput").val();
+          globalUserId = userIdSearch;
+          localStorage.setItem("globalUserId", globalUserId);
+          $("#userId").text(globalUserId);
+
+          event.preventDefault();
+          $.ajax({
+            url: "/api/populate",
+            method: "POST",
+            data: {
+              userId: userIdSearch,
+            },
+            success: function (response) {
+              $("#example").DataTable().clear().draw();
+              appendData(response.data);
+            },
+            error: function (error) {
+              alert("An error occurred. Please try again.");
+            },
+          });
+        });
+        let populateOnPageLoad = () => {
+          $.ajax({
+            url: "/api/populate",
+            method: "POST",
+            data: {
+              userId: globalUserId,
+            },
+            success: function (response) {
+              $("#example").DataTable().clear().draw();
+              appendData(response.data);
+            },
+            error: function (error) {
+              alert("An error occurred. Please try again.");
+            },
+          });
+        };
+        populateOnPageLoad();
+      });
+    </script>
+  </body>
+</html>

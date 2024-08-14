@@ -1,0 +1,305 @@
+openapi: 3.1.0
+x-stoplight:
+  id: ne6zyjh39ooks
+info:
+  title: url_shortner
+  version: '1.0'
+  summary: It shorten your urls
+  description: |
+    An url shortner with the following features:
+    - URL Shortening: Scissor allows users to shorten URLs by pasting a long URL into the Scissor platform and a shorter URL gets automatically generated. The shortened URL is designed to be as short as possible, making it easy to share on social media or other channels.
+
+
+    - Custom URLs: Scissor also allows users to customize their shortened URLs. Users can choose their own custom domain name and customize the URL to reflect their brand or content. This feature is particularly useful for individuals or small businesses who want to create branded links for their 
+
+
+    - QR Code Generation: Scissor allows users to also generate QR codes for the shortened URLs. Users can download the QR code image and use it in their promotional materials or/and on their website. This feature will be implemented using a third-party QR code generator API, which can be integrated into the Scissor platform.
+
+    - Analytics: Scissor provides basic analytics that allows users to track their shortened URL's performance. Users can see how many clicks their shortened URL has received and where the clicks are coming from. We need to track when a URL is used.
+
+    - Link History: Scissor allows users to see the history of links they’ve created so they can easily find and reuse links they have previously created
+  contact:
+    name: Fatuma
+    email: dummy@example.com
+    url: example.com
+  license:
+    name: ''
+    url : 'https://www.gnu.org/licenses/gpl-3.0.en.html'
+servers:
+  - url: 'http://localhost:8000'
+paths:
+  /api/shorten:
+    post:
+      summary: POST longUrl endpoint
+      tags:
+        - post
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    data:
+                      - _id: new ObjectId('66b108548cbd76af7a98570f')
+                        url: 'http://google.com'
+                        shortUrl: 'http://localhost:8000/lm1'
+                        userId: '162049962016'
+                        lastUsed: null
+                        totalHits: 0
+                        qrCodeId: null
+                        customDomain: ''
+                        origin: []
+                        createdAt: '2024-08-05T17:13:56.159Z'
+                        __v: 0
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        url:
+                          type: string
+                        shortUrl:
+                          type: string
+                        userId:
+                          type: string
+                        lastUsed:
+                          type:
+                            - string
+                            - 'null'
+                          default: null
+                        totalHits:
+                          type: integer
+                        qrCodeId:
+                          type: 'null'
+                        customDomain:
+                          type: string
+                        origin:
+                          type: array
+                          items:
+                            type: object
+                        createdAt:
+                          type: string
+                        __v:
+                          type: integer
+              examples:
+                Example 1:
+                  value:
+                    data:
+                      - _id: new ObjectId('66b108548cbd76af7a98570f')
+                        url: 'http://google.com'
+                        shortUrl: 'http://localhost:8000/lm1'
+                        userId: '162049962016'
+                        lastUsed: null
+                        totalHits: 0
+                        qrCodeId: null
+                        customDomain: ''
+                        origin: []
+                        createdAt: '2024-08-05T17:13:56.159Z'
+                        __v: 0
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: 49hdvj00tl8rs
+              examples:
+                Example 1:
+                  value:
+                    error: Invalid or missing 'url' field
+                Example 2:
+                  value:
+                    error: Invalid 'customDomain' field
+                Example 3:
+                  value:
+                    error: 'Some error occurred, possible duplicate data'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                x-examples:
+                  Example 1:
+                    error: Internal server error
+              examples:
+                Example 1:
+                  value:
+                    error: Internal server error
+      operationId: post-shorten
+      x-stoplight:
+        id: vakvha8y7c4yb
+      description: |-
+        /shorten
+        [Operation]: POST
+        Operation ID: post-long url
+        Description: post the long url alongwith userId and optional custom domain to get the shortened url in response
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                customDomain:
+                  type: 'null'
+                userId:
+                  type: integer
+              x-examples:
+                Example 1:
+                  url: 'http://google.com'
+                  customDomain: null
+                  userId: 162049962016
+            examples:
+              Example 1:
+                value:
+                  url: 'http://google.com'
+                  customDomain: null
+                  userId: 162049962016
+        description: provide the required payload
+    parameters: []
+  /api/populate:
+    post:
+      summary: POST userId endpoint
+      tags:
+        - post
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    data:
+                      - _id: new ObjectId('66b108548cbd76af7a98570f')
+                        url: 'http://google.com'
+                        shortUrl: 'http://localhost:8000/lm1'
+                        userId: '162049962016'
+                        lastUsed: null
+                        totalHits: 0
+                        qrCodeId: null
+                        customDomain: ''
+                        origin: []
+                        createdAt: '2024-08-05T17:13:56.159Z'
+                        __v: 0
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        url:
+                          type: string
+                        shortUrl:
+                          type: string
+                        userId:
+                          type: string
+                        lastUsed:
+                          type:
+                            - string
+                            - 'null'
+                        totalHits:
+                          type: integer
+                        qrCodeId:
+                          type: 'null'
+                        customDomain:
+                          type: string
+                        origin:
+                          type: array
+                          items:
+                            type: object
+                        createdAt:
+                          type: string
+                        __v:
+                          type: integer
+              examples:
+                Example 1:
+                  value:
+                    data:
+                      - _id: new ObjectId('66b108548cbd76af7a98570f')
+                        url: 'http://google.com'
+                        shortUrl: 'http://localhost:8000/lm1'
+                        userId: '162049962016'
+                        lastUsed: null
+                        totalHits: 0
+                        qrCodeId: null
+                        customDomain: ''
+                        origin: []
+                        createdAt: '2024-08-05T17:13:56.159Z'
+                        __v: 0
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                x-examples:
+                  Example 1:
+                    error: Invalid or missing 'userId' field
+              examples:
+                Example 1:
+                  value:
+                    error: Invalid or missing 'userId' field
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                x-examples:
+                  Example 1:
+                    error: Internal server error
+              examples:
+                Example 1:
+                  value:
+                    error: Internal server error
+      operationId: post-populate
+      x-stoplight:
+        id: hm4rs5mczfzdz
+      description: post userId to populate history and analytics data
+      requestBody:
+        description: provide userId
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+              x-examples:
+                Example 1:
+                  userId: 162049962016
+            examples:
+              Example 1:
+                value:
+                  userId: 162049962016
+    parameters: []
+components:
+  schemas: {}
+  securitySchemes: {}
+tags:
+  - name: post

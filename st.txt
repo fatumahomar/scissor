@@ -1,0 +1,11 @@
+.
+├── dist
+├── node_modules
+├── package.json
+├── package-lock.json
+├── README.md
+├── src
+├── st.txt
+└── tsconfig.json
+
+3 directories, 5 files
